@@ -1,7 +1,7 @@
 .login-page {
   position: relative;
-  width: 85vw;
-  height: 85vh;
+  width: 75vw;
+  height: 75vh;
   display: flex;
   background: #000;
   overflow: hidden;
