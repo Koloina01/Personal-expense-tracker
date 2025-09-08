@@ -12,30 +12,32 @@
 
 .hexagon {
   position: absolute;
-  width: 100px;
-  height: 55px;
+  width: 100px;        /* largeur */
+  height: 55px;        /* hauteur de la partie centrale */
   background: linear-gradient(45deg, #00ffcc, #0066ff);
-  opacity: 0.1;
+  opacity: 0.15;
   animation: rotateHexagon 20s infinite linear;
 }
 
+/* triangles en haut et en bas */
 .hexagon:before,
 .hexagon:after {
   content: "";
   position: absolute;
+  left: 0;
   width: 0;
   border-left: 50px solid transparent;
   border-right: 50px solid transparent;
 }
 
 .hexagon:before {
-  bottom: 100%;
-  border-bottom: 25px solid #00ffcc;
+  top: -25px; /* pour bien coller au centre */
+  border-bottom: 25px solid #00ffcc; /* même couleur que le dégradé */
 }
 
 .hexagon:after {
-  top: 100%;
-  border-top: 25px solid #0066ff;
+  bottom: -25px; /* pour bien coller au centre */
+  border-top: 25px solid #0066ff; /* même couleur que le dégradé */
 }
 
 @keyframes rotateHexagon {
