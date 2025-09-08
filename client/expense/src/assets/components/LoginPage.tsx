@@ -25,7 +25,13 @@ const LoginPage: React.FC = () => {
             <input type="password" placeholder="Password" className="login-input" />
             <button type="submit" className="login-button">Login</button>
           </form>
-          <p className="login-footer">Forgot your password?</p>
+          
+          <div className="login-footer-links">
+            <p className="login-footer">Forgot your password?</p>
+            <p className="signup-text">
+              Don't have an account? <a href="/signup" className="signup-link">Sign up</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>

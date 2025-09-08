@@ -61,6 +61,26 @@
   height: 5rem;
 }
 
+.signup-text {
+  margin-top: 10px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.signup-link {
+  color: #00ffcc;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.signup-link:hover {
+  color: #0066ff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+
 /* Formulaire droit (inchangé) */
 .login-title { font-size: 32px; font-weight: bold; margin-bottom: 30px; letter-spacing: 1px; }
 .login-form { display: flex; flex-direction: column; gap: 20px; }
