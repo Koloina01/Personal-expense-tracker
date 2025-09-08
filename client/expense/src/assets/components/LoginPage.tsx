@@ -9,7 +9,7 @@ const LoginPage: React.FC = () => {
 
       <div className="login-left">
         <div className="login-left-content">
-          <h1 className="left-title">Welcome to Our Platform</h1>
+          <h1 className="left-title">Welcome to Poketra vy</h1>
           <p className="left-text">
             Experience the future of digital interactions. Connect, explore, and enjoy seamless performance.
           </p>
@@ -18,7 +18,8 @@ const LoginPage: React.FC = () => {
 
       <div className="login-panel">
         <div className="login-content">
-          <h2 className="login-title">Welcome Back</h2>
+          <img src="/expense-tracker.png" alt="" className='logo-expense'/>
+          <h2 className="login-title">Sign in</h2>
           <form className="login-form">
             <input type="text" placeholder="Username" className="login-input" />
             <input type="password" placeholder="Password" className="login-input" />
