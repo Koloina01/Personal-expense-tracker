@@ -108,3 +108,18 @@
   .login-button { font-size: 14px; }
   .login-footer { font-size: 12px; }
 }
+
+/* Transition des panneaux */
+.login-left, .login-panel {
+  transition: transform 1s ease;
+}
+
+/* Quand on switch vers Sign Up */
+.slide-left {
+  transform: translateX(100%); /* gauche glisse vers la droite */
+}
+
+.slide-right {
+  transform: translateX(-100%); /* droite glisse vers la gauche */
+}
+

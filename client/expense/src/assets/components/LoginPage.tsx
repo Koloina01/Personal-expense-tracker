@@ -1,35 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './LoginPage.css';
 import HexagonBackground from './HexagonBackground';
 
 const LoginPage: React.FC = () => {
+  const [isSignUp, setIsSignUp] = useState(false);
+
+  const toggleForm = () => setIsSignUp(!isSignUp);
+
   return (
     <div className="login-page">
       <HexagonBackground />
 
-      <div className="login-left">
+      {/* Panneau gauche */}
+      <div className={`login-left ${isSignUp ? 'slide-left' : ''}`}>
         <div className="login-left-content">
-          <h1 className="left-title">Welcome to Poketra vy</h1>
+          <h1 className="left-title">
+            {isSignUp ? "Join Poketra vy Today" : "Welcome to Poketra vy"}
+          </h1>
           <p className="left-text">
-            Experience the future of digital interactions. Connect, explore, and enjoy seamless performance.
+            {isSignUp
+              ? "Create your account and start connecting with the world."
+              : "Experience the future of digital interactions. Connect, explore, and enjoy seamless performance."}
           </p>
         </div>
       </div>
 
-      <div className="login-panel">
+      {/* Panneau droit */}
+      <div className={`login-panel ${isSignUp ? 'slide-right' : ''}`}>
         <div className="login-content">
-          <img src="/expense-tracker.png" alt="" className='logo-expense'/>
-          <h2 className="login-title">Sign in</h2>
-          <form className="login-form">
+          <img src="/expense-tracker.png" alt="" className="logo-expense" />
+
+          <h2 className="login-title">{isSignUp ? "Sign Up" : "Sign In"}</h2>
+
+          <form className="login-form" onSubmit={(e) => e.preventDefault()}>
+            {isSignUp && <input type="text" placeholder="Full Name" className="login-input" />}
             <input type="text" placeholder="Username" className="login-input" />
             <input type="password" placeholder="Password" className="login-input" />
-            <button type="submit" className="login-button">Login</button>
+            {isSignUp && <input type="password" placeholder="Confirm Password" className="login-input" />}
+            <button type="submit" className="login-button">
+              {isSignUp ? "Register" : "Login"}
+            </button>
           </form>
-          
+
           <div className="login-footer-links">
-            <p className="login-footer">Forgot your password?</p>
+            {!isSignUp && <p className="login-footer">Forgot your password?</p>}
             <p className="signup-text">
-              Don't have an account? <a href="/signup" className="signup-link">Sign up</a>
+              {isSignUp ? "Already have an account? " : "Don't have an account? "}
+              <span className="signup-link" onClick={toggleForm}>
+                {isSignUp ? "Sign in" : "Sign up"}
+              </span>
             </p>
           </div>
         </div>
