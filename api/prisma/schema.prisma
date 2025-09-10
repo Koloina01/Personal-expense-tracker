@@ -13,24 +13,27 @@ enum ExpenseType {
 }
 
 model User {
-  id             Int             @id @default(autoincrement())
-  fullName       String?
-  email          String          @unique
-  password       String
-  expenses       Expense[]
-  incomes        Income[]
-  receiptUploads ReceiptUpload[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  budget         Decimal?        @default(0)
+  id                  Int                  @id @default(autoincrement())
+  fullName            String
+  email               String               @unique
+  password            String
+  expenses            Expense[]
+  incomes             Income[]
+  receiptUploads      ReceiptUpload[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  budget              Decimal?             @default(0)
+  userCategoryBudgets UserCategoryBudget[]
+  summary             String               @db.Text
 }
 
 model Category {
-  id        Int       @id @default(autoincrement())
-  name      String    @unique
-  expenses  Expense[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                  Int                  @id @default(autoincrement())
+  name                String               @unique
+  expenses            Expense[]
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  userCategoryBudgets UserCategoryBudget[]
 }
 
 model Expense {
@@ -38,7 +41,7 @@ model Expense {
   amount          Decimal
   date            DateTime?
   categoryId      Int
-  category        Category    @relation(fields: [categoryId], references: [id])
+  category        Category       @relation(fields: [categoryId], references: [id])
   description     String?
   type            ExpenseType    @default(ONE_TIME)
   creationDate    DateTime       @default(now())
@@ -78,4 +81,16 @@ model ReceiptUpload {
   userId      Int
   user        User      @relation(fields: [userId], references: [id])
   expense     Expense[]
+}
+
+model UserCategoryBudget {
+  id         Int     @id @default(autoincrement())
+  userId     Int
+  categoryId Int
+  budget     Decimal @default(0)
+
+  user     User     @relation(fields: [userId], references: [id])
+  category Category @relation(fields: [categoryId], references: [id])
+
+  @@unique([userId, categoryId])
 }

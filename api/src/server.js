@@ -1,5 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
+
+import expenseRoutes from "./routes/expense.routes.js";
 import authRoutes from "./routes/auth.js";
 
 dotenv.config();
@@ -7,10 +9,10 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Routes
+app.use("/api/expenses", expenseRoutes);
 app.use("/auth", authRoutes);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
