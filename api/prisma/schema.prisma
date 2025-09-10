@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -39,7 +38,7 @@ model Expense {
   amount          Decimal
   date            DateTime?
   categoryId      Int
-  category        Category[]
+  category        Category    @relation(fields: [categoryId], references: [id])
   description     String?
   type            ExpenseType    @default(ONE_TIME)
   creationDate    DateTime       @default(now())
