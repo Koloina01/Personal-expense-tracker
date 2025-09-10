@@ -1,18 +1,41 @@
-import React, { useState } from 'react';
-import './LoginPage.css';
-import HexagonBackground from './HexagonBackground';
+import React, { useState } from "react";
+import HexagonBackground from "./HexagonBackground";
+import "./LoginPage.css";
+
+const API_BASE = "http://localhost:5000";
 
 const LoginPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const toggleForm = () => setIsSignUp(!isSignUp);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const endpoint = isSignUp ? "register" : "login";
+    const payload = isSignUp ? { fullName, email, password } : { email, password };
+
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      console.log("Server response:", data); // juste log pour l'instant
+    } catch (err) {
+      console.error("Erreur fetch:", err);
+    }
+  };
 
   return (
     <div className="login-page">
       <HexagonBackground />
 
-      {/* Panneau gauche */}
-      <div className={`login-left ${isSignUp ? 'slide-left' : ''}`}>
+      <div className={`login-left ${isSignUp ? "slide-left" : ""}`}>
         <div className="login-left-content">
           <h1 className="left-title">
             {isSignUp ? "Join Poketra vy Today" : "Welcome to Poketra vy"}
@@ -25,25 +48,40 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Panneau droit */}
-      <div className={`login-panel ${isSignUp ? 'slide-right' : ''}`}>
+      <div className={`login-panel ${isSignUp ? "slide-right" : ""}`}>
         <div className="login-content">
-          <img src="/expense-tracker.png" alt="" className="logo-expense" />
-
           <h2 className="login-title">{isSignUp ? "Sign Up" : "Sign In"}</h2>
 
-          <form className="login-form" onSubmit={(e) => e.preventDefault()}>
-            {isSignUp && <input type="text" placeholder="Full Name" className="login-input" />}
-            <input type="text" placeholder="Username" className="login-input" />
-            <input type="password" placeholder="Password" className="login-input" />
-            {isSignUp && <input type="password" placeholder="Confirm Password" className="login-input" />}
+          <form className="login-form" onSubmit={handleSubmit}>
+            {isSignUp && (
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="login-input"
+              />
+            )}
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="login-input"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="login-input"
+            />
             <button type="submit" className="login-button">
               {isSignUp ? "Register" : "Login"}
             </button>
           </form>
 
           <div className="login-footer-links">
-            {!isSignUp && <p className="login-footer">Forgot your password?</p>}
             <p className="signup-text">
               {isSignUp ? "Already have an account? " : "Don't have an account? "}
               <span className="signup-link" onClick={toggleForm}>
