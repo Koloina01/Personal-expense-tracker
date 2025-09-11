@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import HexagonBackground from "./HexagonBackground";
 import "./LoginPage.css";
 
@@ -10,12 +10,39 @@ const LoginPage: React.FC = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const toggleForm = () => setIsSignUp(!isSignUp);
+  const toggleForm = () => {
+    setIsSignUp(!isSignUp);
+    setErrorMessage("");
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage("");
+
+    if (!email || !password) {
+      setErrorMessage("All fields are required.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Invalid email.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setErrorMessage("Password must contain at least 6 characters.");
+      return;
+    }
+
+    if (isSignUp && !fullName.trim()) {
+      setErrorMessage("Fullname are required.");
+      return;
+    }
+
     const endpoint = isSignUp ? "register" : "login";
     const payload = isSignUp ? { fullName, email, password } : { email, password };
 
@@ -31,12 +58,13 @@ const LoginPage: React.FC = () => {
       if (res.ok && data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/dashboard"); 
+        navigate("/dashboard");
       } else {
-        alert(data.message || "Authentication failed");
+        setErrorMessage(data.message || "Authentication failed.");
       }
     } catch (err) {
       console.error("Erreur fetch:", err);
+      setErrorMessage("An error has occurred. Please try again later.");
     }
   };
 
@@ -71,6 +99,7 @@ const LoginPage: React.FC = () => {
                 className="login-input"
               />
             )}
+
             <input
               type="email"
               placeholder="Email"
@@ -78,6 +107,7 @@ const LoginPage: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               className="login-input"
             />
+
             <input
               type="password"
               placeholder="Password"
@@ -85,6 +115,9 @@ const LoginPage: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               className="login-input"
             />
+
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
+
             <button type="submit" className="login-button">
               {isSignUp ? "Register" : "Login"}
             </button>

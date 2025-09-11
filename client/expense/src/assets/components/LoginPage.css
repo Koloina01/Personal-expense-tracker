@@ -9,7 +9,6 @@
   font-family: 'Arial', sans-serif;
 }
 
-/* Panneau gauche */
 .login-left {
   flex: 1;
   display: flex;
@@ -37,7 +36,6 @@
   opacity: 0.8;
 }
 
-/* Panneau droit */
 .login-panel {
   flex: 1;
   display: flex;
@@ -82,7 +80,6 @@
 }
 
 
-/* Formulaire droit (inchangé) */
 .login-title { font-size: 32px; font-weight: bold; margin-bottom: 30px; letter-spacing: 1px; }
 .login-form { display: flex; flex-direction: column; gap: 20px; }
 .login-input { padding: 12px 15px; border-radius: 10px; border: none; outline: none; background: rgba(255,255,255,0.15); color: #fff; font-size:16px; transition: 0.3s; }
@@ -93,7 +90,6 @@
 .login-footer { margin-top: 20px; font-size:14px; color: rgba(255,255,255,0.7); cursor:pointer; }
 .login-footer:hover { text-decoration: underline; }
 
-/* ===== Responsive ===== */
 @media (max-width: 1024px) {
   .login-page { flex-direction: column; }
   .login-left, .login-panel { width: 100%; min-width: 0; max-width: 100%; height: 50vh; justify-content: center; padding: 30px; }
@@ -115,12 +111,18 @@
   transition: transform 1s ease;
 }
 
-/* Quand on switch vers Sign Up */
 .slide-left {
-  transform: translateX(100%); /* gauche glisse vers la droite */
+  transform: translateX(100%);
 }
 
 .slide-right {
-  transform: translateX(-100%); /* droite glisse vers la gauche */
+  transform: translateX(-100%); 
 }
 
+.error-message {
+  color: red;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  text-align: left;
+}

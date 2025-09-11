@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime";
 
 const prisma = new PrismaClient();
+
 
 export const addIncome = async (req, res) => {
   try {
