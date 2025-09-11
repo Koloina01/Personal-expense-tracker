@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HexagonBackground from "./HexagonBackground";
-import "./LoginPage.css";
+import "./css/LoginPage.css";
 
 const API_BASE = "http://localhost:5000";
 

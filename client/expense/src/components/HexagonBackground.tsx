@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from 'react';
-import './HexagonBackground.css';
+import './css/HexagonBackground.css';
 
 const HexagonBackground: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);

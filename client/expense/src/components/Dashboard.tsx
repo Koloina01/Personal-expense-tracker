@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./Dashboard.css";
+import "./css/Dashboard.css";
 import { Pie, Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,

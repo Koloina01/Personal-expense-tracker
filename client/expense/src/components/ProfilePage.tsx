@@ -1,7 +1,7 @@
 import React from "react";
 import HexagonBackground from "./HexagonBackground";
 import Sidebar from "./Sidebar"; 
-import "./ProfilePage.css";
+import "./css/ProfilePage.css";
 
 const ProfilePage: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");

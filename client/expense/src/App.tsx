@@ -1,8 +1,8 @@
 import React, { type JSX } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./assets/components/LoginPage";
-import ProfilePage from "./assets/components/ProfilePage";
-import DashboardPage from "./assets/components/Dashboard";
+import LoginPage from "./components/LoginPage";
+import ProfilePage from "./components/ProfilePage";
+import DashboardPage from "./components/Dashboard";
 // 🔑 Route protégée
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
