@@ -11,35 +11,44 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
     setErrorMessage("");
+    setSuccessMessage("");
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage("");
+    setSuccessMessage("");
+    setLoading(true);
 
     if (!email || !password) {
       setErrorMessage("All fields are required.");
+      setLoading(false);
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErrorMessage("Invalid email.");
+      setLoading(false);
       return;
     }
 
     if (password.length < 6) {
       setErrorMessage("Password must contain at least 6 characters.");
+      setLoading(false);
       return;
     }
 
     if (isSignUp && !fullName.trim()) {
-      setErrorMessage("Fullname are required.");
+      setErrorMessage("Fullname is required.");
+      setLoading(false);
       return;
     }
 
@@ -54,16 +63,26 @@ const LoginPage: React.FC = () => {
       });
 
       const data = await res.json();
+      setLoading(false);
 
-      if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        navigate("/dashboard");
+      if (res.ok) {
+        if (isSignUp) {
+          setSuccessMessage("User created successfully.");
+          setIsSignUp(false);
+          setFullName("");
+          setEmail("");
+          setPassword("");
+        } else if (data.token) {
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          navigate("/dashboard");
+        }
       } else {
         setErrorMessage(data.message || "Authentication failed.");
       }
     } catch (err) {
       console.error("Erreur fetch:", err);
+      setLoading(false);
       setErrorMessage("An error has occurred. Please try again later.");
     }
   };
@@ -117,6 +136,10 @@ const LoginPage: React.FC = () => {
             />
 
             {errorMessage && <p className="error-message">{errorMessage}</p>}
+
+            {loading && <div className="loading-spinner"></div>}
+
+            {successMessage && <p className="success-message">{successMessage}</p>}
 
             <button type="submit" className="login-button">
               {isSignUp ? "Register" : "Login"}
