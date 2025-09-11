@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import HexagonBackground from "./HexagonBackground";
 import "./LoginPage.css";
 
@@ -9,6 +10,7 @@ const LoginPage: React.FC = () => {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const toggleForm = () => setIsSignUp(!isSignUp);
 
@@ -25,7 +27,14 @@ const LoginPage: React.FC = () => {
       });
 
       const data = await res.json();
-      console.log("Server response:", data); // juste log pour l'instant
+
+      if (res.ok && data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/dashboard"); 
+      } else {
+        alert(data.message || "Authentication failed");
+      }
     } catch (err) {
       console.error("Erreur fetch:", err);
     }
@@ -42,8 +51,8 @@ const LoginPage: React.FC = () => {
           </h1>
           <p className="left-text">
             {isSignUp
-              ? "Create your account and start connecting with the world."
-              : "Experience the future of digital interactions. Connect, explore, and enjoy seamless performance."}
+              ? "Create your account and start tracking expenses."
+              : "Stay in control of your budget with Poketra vy."}
           </p>
         </div>
       </div>

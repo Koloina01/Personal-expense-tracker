@@ -2,6 +2,7 @@
   position: relative;
   width: 75vw;
   height: 75vh;
+  margin-left: 8rem;
   display: flex;
   background: #000;
   overflow: hidden;
