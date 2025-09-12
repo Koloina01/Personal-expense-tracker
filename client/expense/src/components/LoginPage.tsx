@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import HexagonBackground from "./HexagonBackground";
 import "./css/LoginPage.css";
 
@@ -56,34 +57,34 @@ const LoginPage: React.FC = () => {
     const payload = isSignUp ? { fullName, email, password } : { email, password };
 
     try {
-      const res = await fetch(`${API_BASE}/api/auth/${endpoint}`, {
-        method: "POST",
+      const res = await axios.post(`${API_BASE}/api/auth/${endpoint}`, payload, {
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
       setLoading(false);
 
-      if (res.ok) {
+      if (res.status === 200) {
         if (isSignUp) {
           setSuccessMessage("User created successfully.");
           setIsSignUp(false);
           setFullName("");
           setEmail("");
           setPassword("");
-        } else if (data.token) {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
+        } else if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("user", JSON.stringify(res.data.user));
           navigate("/profile");
         }
-      } else {
-        setErrorMessage(data.message || "Authentication failed.");
       }
-    } catch (err) {
-      console.error("Erreur fetch:", err);
+    } catch (err: any) {
+      console.error("Erreur axios:", err);
       setLoading(false);
-      setErrorMessage("An error has occurred. Please try again later.");
+
+      if (err.response && err.response.data?.message) {
+        setErrorMessage(err.response.data.message);
+      } else {
+        setErrorMessage("An error has occurred. Please try again later.");
+      }
     }
   };
 
