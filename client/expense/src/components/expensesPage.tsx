@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Expense, Category } from "../models/model";
+import type { Expense, Category } from "../models/model";
 import ExpenseFilter from "./expenseFilter";
 
 export default function ExpensesPage() {

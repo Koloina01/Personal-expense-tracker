@@ -3,7 +3,9 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import ProfilePage from "./components/ProfilePage";
 import DashboardPage from "./components/Dashboard";
-// 🔑 Route protégée
+import ExpenseManagement from "./components/ExpenseManagement";
+import SettingsPage from "./components/SettingsPage";
+
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/" />;
@@ -12,18 +14,8 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 const App: React.FC = () => {
   return (
     <Routes>
-      {/* Route publique */}
       <Route path="/" element={<LoginPage />} />
 
-      {/* Routes protégées */}
-      <Route
-        path="/dashboard"
-        element={
-          <PrivateRoute>
-            <DashboardPage />
-          </PrivateRoute>
-        }
-      />
       <Route
         path="/profile"
         element={
@@ -33,7 +25,31 @@ const App: React.FC = () => {
         }
       />
 
-      {/* Si route inconnue → login */}
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <DashboardPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/expenses"
+        element={
+          <PrivateRoute>
+            <ExpenseManagement />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <PrivateRoute>
+            <SettingsPage />
+          </PrivateRoute>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

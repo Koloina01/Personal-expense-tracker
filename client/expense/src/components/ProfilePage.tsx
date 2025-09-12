@@ -29,7 +29,7 @@ export default function ProfilePage() {
           Expense Management
         </button>
         <button
-          onClick={() => alert("Dashboard à implémenter 😎")}
+          onClick={() => navigate("/dashboard")}
           className="bg-green-500 text-white px-4 py-2 rounded-lg shadow"
         >
           Dashboard

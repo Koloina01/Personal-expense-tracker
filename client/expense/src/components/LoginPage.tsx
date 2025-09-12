@@ -75,7 +75,7 @@ const LoginPage: React.FC = () => {
         } else if (data.token) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
-          navigate("/dashboard");
+          navigate("/profile");
         }
       } else {
         setErrorMessage(data.message || "Authentication failed.");
