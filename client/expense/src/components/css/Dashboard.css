@@ -124,7 +124,7 @@
   box-shadow: 0 8px 20px rgba(13, 148, 136, 0.4);
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .dashboard-container {
     padding: 1rem;
@@ -160,4 +160,107 @@
     font-size: 14px;
     padding: 10px 12px;
   }
+}
+
+
+.dashboard-container {
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem;
+  font-family: "Poppins", sans-serif;
+  color: #222;
+  background-color: #fdfdfd;
+
+  
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='104' viewBox='0 0 120 104'%3E%3Cpolygon points='60,0 120,26 120,78 60,104 0,78 0,26' fill='%23eaeaea'/%3E%3C/svg%3E");
+  background-size: 120px 104px;
+}
+
+
+.dashboard-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #001948;
+}
+
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 25, 72, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 25, 72, 0.25);
+}
+
+.dashboard-card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #dfa408;
+}
+
+.dashboard-card p {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #001948;
+}
+
+
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 25, 72, 0.15);
+}
+
+.chart-container h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #001948;
+}
+
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.dashboard-button {
+  background-color: #001948;
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.dashboard-button:hover {
+  background-color: #dfa408;
+  transform: scale(1.05);
 }
