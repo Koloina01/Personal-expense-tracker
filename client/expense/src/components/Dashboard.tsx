@@ -11,7 +11,7 @@ import {
   LinearScale,
   PointElement,
 } from "chart.js";
-import "./Dashboard.css";
+import "./css/Dashboard.css";
 
 
 ChartJS.register(
@@ -25,12 +25,46 @@ ChartJS.register(
   PointElement
 );
 
+const HexagonBackground: React.FC = () => {
+  return (
+    <div 
+      className="hexagon-background"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 0,
+        overflow: 'hidden',
+        pointerEvents: 'none'
+      }}
+    >
+      {Array.from({ length: 20 }).map((_, i) => (
+        <div
+          key={i}
+          style={{
+            position: 'absolute',
+            width: '120px',
+            height: '104px',
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='104' viewBox='0 0 120 104'%3E%3Cpolygon points='60,0 120,26 120,78 60,104 0,78 0,26' fill='%23eaeaea'/%3E%3C/svg%3E\")",
+            opacity: 0.3,
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            animation: `float ${15 + Math.random() * 20}s infinite ease-in-out`,
+            animationDelay: `${Math.random() * 5}s`
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 const Dashboard: React.FC = () => {
   const [expenses, setExpenses] = useState<number[]>([200, 300, 150, 100, 250]);
   const [income, setIncome] = useState<number[]>([500, 600, 550, 700, 650]);
 
   useEffect(() => {
-    
     console.log("Chargement des données du Dashboard...");
   }, []);
 
@@ -51,6 +85,7 @@ const Dashboard: React.FC = () => {
     ],
   };
 
+  
   const lineData = {
     labels: ["Jan", "Fév", "Mar", "Avr", "Mai"],
     datasets: [
@@ -59,19 +94,81 @@ const Dashboard: React.FC = () => {
         data: income,
         borderColor: "#36A2EB",
         fill: false,
+        tension: 0.1,
       },
       {
         label: "Dépenses",
         data: expenses,
         borderColor: "#FF6384",
         fill: false,
+        tension: 0.1,
       },
     ],
   };
 
+  
+  const pieOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          color: '#001948',
+          font: {
+            family: "'Poppins', sans-serif"
+          }
+        }
+      }
+    }
+  };
+
+  const lineOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          color: '#001948',
+          font: {
+            family: "'Poppins', sans-serif"
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 25, 72, 0.1)'
+        },
+        ticks: {
+          color: '#001948',
+          font: {
+            family: "'Poppins', sans-serif"
+          }
+        }
+      },
+      x: {
+        grid: {
+          color: 'rgba(0, 25, 72, 0.1)'
+        },
+        ticks: {
+          color: '#001948',
+          font: {
+            family: "'Poppins', sans-serif"
+          }
+        }
+      }
+    }
+  };
+
   return (
     <div className="dashboard-container">
-      <h1 className="dashboard-title">Dashboard</h1>
+      <HexagonBackground />
+      
+      <h1 className="dashboard-title">Dashboard Financier</h1>
 
       <div className="dashboard-grid">
         <Card>
@@ -85,7 +182,7 @@ const Dashboard: React.FC = () => {
         </Card>
 
         <Card>
-          <h2>Économie</h2>
+          <h2>Économies</h2>
           <p>
             {income.reduce((a, b) => a + b, 0) -
               expenses.reduce((a, b) => a + b, 0)}{" "}
@@ -95,20 +192,24 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="charts-container">
-        <div className="chart-container">
+        <div className="chart-card">
           <h2>Répartition des Dépenses</h2>
-          <Pie data={pieData} />
+          <div className="chart-wrapper">
+            <Pie data={pieData} options={pieOptions} />
+          </div>
         </div>
 
-        <div className="chart-container">
+        <div className="chart-card">
           <h2>Revenus vs Dépenses</h2>
-          <Line data={lineData} />
+          <div className="chart-wrapper">
+            <Line data={lineData} options={lineOptions} />
+          </div>
         </div>
       </div>
 
       <div className="actions">
-        <Button>Ajouter une Dépense</Button>
-        <Button>Ajouter un Revenu</Button>
+        <Button className="green-button">Ajouter une Dépense</Button>
+        <Button className="teal-button">Ajouter un Revenu</Button>
       </div>
     </div>
   );
@@ -121,6 +222,7 @@ const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({
 }) => (
   <div className={`dashboard-card ${className || ""}`}>{children}</div>
 );
+
 
 const Button: React.FC<{
   children: React.ReactNode;
