@@ -1,8 +1,36 @@
+import React, { useEffect, useState } from "react";
+import { Pie, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+} from "chart.js";
 import { useNavigate } from "react-router-dom";
+import HexagonBackground from "./HexagonBackground"; 
+import "./css/Dashboard.css";
 
-export default function ProfilePage() {
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement
+);
+
+const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-
+  const [expenses, setExpenses] = useState<number[]>([200, 300, 150, 100, 250]);
+  const [income, setIncome] = useState<number[]>([500, 600, 550, 700, 650]);
+  
   
   const user = {
     fullName: "Erickah Rakoto",
@@ -10,37 +38,118 @@ export default function ProfilePage() {
     budget: 250000,
   };
 
-  return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <h1 className="text-3xl font-bold mb-4">Profil utilisateur</h1>
+  useEffect(() => {
+    
+    console.log("Chargement des données du Dashboard...");
+  }, []);
 
-      <div className="bg-white shadow-lg rounded-xl p-6 w-full max-w-md">
-        <p><strong>Nom :</strong> {user.fullName}</p>
-        <p><strong>Email :</strong> {user.email}</p>
-        <p><strong>Budget :</strong> {user.budget} Ar</p>
+  const pieData = {
+    labels: ["Logement", "Nourriture", "Transport", "Loisirs", "Autres"],
+    datasets: [
+      {
+        data: expenses,
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
+      },
+    ],
+  };
+
+  const lineData = {
+    labels: ["Jan", "Fév", "Mar", "Avr", "Mai"],
+    datasets: [
+      {
+        label: "Revenus",
+        data: income,
+        borderColor: "#36A2EB",
+        fill: false,
+      },
+      {
+        label: "Dépenses",
+        data: expenses,
+        borderColor: "#FF6384",
+        fill: false,
+      },
+    ],
+  };
+
+  return (
+    <div className="dashboard-container">
+      <HexagonBackground />
+      <div className="dashboard-header">
+        <h1 className="dashboard-title">Dashboard</h1>
+        <div className="user-profile-card">
+          <h2>Profil Utilisateur</h2>
+          <div className="user-info">
+            <p><strong>Nom :</strong> {user.fullName}</p>
+            <p><strong>Email :</strong> {user.email}</p>
+            <p><strong>Budget :</strong> {user.budget.toLocaleString()} Ar</p>
+          </div>
+        </div>
       </div>
 
-  
-      <div className="mt-6 flex flex-col gap-4 w-full max-w-md">
-        <button
-          onClick={() => navigate("/expenses")}
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow"
-        >
-          Expense Management
-        </button>
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg shadow"
-        >
-          Dashboard
-        </button>
-        <button
-          onClick={() => navigate("/settings")}
-          className="bg-gray-700 text-white px-4 py-2 rounded-lg shadow"
-        >
-          Paramètres
-        </button>
+      <div className="dashboard-grid">
+        <Card>
+          <h2>Total Revenus</h2>
+          <p>{income.reduce((a, b) => a + b, 0)} €</p>
+        </Card>
+
+        <Card>
+          <h2>Total Dépenses</h2>
+          <p>{expenses.reduce((a, b) => a + b, 0)} €</p>
+        </Card>
+
+        <Card>
+          <h2>Économie</h2>
+          <p>
+            {income.reduce((a, b) => a + b, 0) -
+              expenses.reduce((a, b) => a + b, 0)}{" "}
+            €
+          </p>
+        </Card>
+      </div>
+
+      <div className="charts-container">
+        <div className="chart-container">
+          <h2>Répartition des Dépenses</h2>
+          <Pie data={pieData} />
+        </div>
+
+        <div className="chart-container">
+          <h2>Revenus vs Dépenses</h2>
+          <Line data={lineData} />
+        </div>
+      </div>
+
+      <div className="actions">
+        <Button onClick={() => navigate("/expenses")}>Gérer les Dépenses</Button>
+        <Button onClick={() => navigate("/settings")}>Paramètres</Button>
+        <Button onClick={() => navigate("/expenses")}>Ajouter une Dépense</Button>
+        <Button onClick={() => navigate("/income")}>Ajouter un Revenu</Button>
       </div>
     </div>
   );
-}
+};
+
+const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className,
+}) => (
+  <div className={`dashboard-card ${className || ""}`}>{children}</div>
+);
+
+const Button: React.FC<{
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+}> = ({ children, onClick, className }) => (
+  <button onClick={onClick} className={`dashboard-button ${className || ""}`}>
+    {children}
+  </button>
+);
+
+export default Dashboard;
