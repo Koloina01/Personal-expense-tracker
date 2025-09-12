@@ -11,9 +11,9 @@ import {
   LinearScale,
   PointElement,
 } from "chart.js";
-import { useNavigate } from "react-router-dom";
-import HexagonBackground from "./HexagonBackground"; 
+import HexagonBackground from "./HexagonBackground";
 import "./css/Dashboard.css";
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
   Title,
@@ -26,20 +26,13 @@ ChartJS.register(
   PointElement
 );
 
-const Dashboard: React.FC = () => {
+const DashboardProfile: React.FC = () => {
   const navigate = useNavigate();
+
   const [expenses, setExpenses] = useState<number[]>([200, 300, 150, 100, 250]);
   const [income, setIncome] = useState<number[]>([500, 600, 550, 700, 650]);
-  
-  
-  const user = {
-    fullName: "Erickah Rakoto",
-    email: "erickah@example.com",
-    budget: 250000,
-  };
 
   useEffect(() => {
-    
     console.log("Chargement des données du Dashboard...");
   }, []);
 
@@ -48,13 +41,7 @@ const Dashboard: React.FC = () => {
     datasets: [
       {
         data: expenses,
-        backgroundColor: [
-          "#FF6384",
-          "#36A2EB",
-          "#FFCE56",
-          "#4BC0C0",
-          "#9966FF",
-        ],
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
       },
     ],
   };
@@ -62,94 +49,89 @@ const Dashboard: React.FC = () => {
   const lineData = {
     labels: ["Jan", "Fév", "Mar", "Avr", "Mai"],
     datasets: [
-      {
-        label: "Revenus",
-        data: income,
-        borderColor: "#36A2EB",
-        fill: false,
-      },
-      {
-        label: "Dépenses",
-        data: expenses,
-        borderColor: "#FF6384",
-        fill: false,
-      },
+      { label: "Revenus", data: income, borderColor: "#36A2EB", fill: false },
+      { label: "Dépenses", data: expenses, borderColor: "#FF6384", fill: false },
     ],
   };
 
+  const user = {
+    fullName: "Erickah Rakoto",
+    email: "erickah@example.com",
+    budget: 250000,
+  };
+
   return (
-    <div className="dashboard-container">
-      <HexagonBackground />
-      <div className="dashboard-header">
-        <h1 className="dashboard-title">Dashboard</h1>
-        <div className="user-profile-card">
-          <h2>Profil Utilisateur</h2>
-          <div className="user-info">
+    
+      <div className="dashboard-profile-container">
+        <HexagonBackground/>
+        <div className="profile-section">
+          <h1 className="section-title">Profil Utilisateur</h1>
+          <div className="profile-card">
             <p><strong>Nom :</strong> {user.fullName}</p>
             <p><strong>Email :</strong> {user.email}</p>
-            <p><strong>Budget :</strong> {user.budget.toLocaleString()} Ar</p>
+            <p><strong>Budget :</strong> {user.budget} Ar</p>
+          </div>
+          <div className="profile-actions">
+            <button onClick={() => navigate("/expenses")} className="btn-blue">
+              Expense Management
+            </button>
+            <button onClick={() => navigate("/dashboard")} className="btn-green">
+              Dashboard
+            </button>
+            <button onClick={() => navigate("/settings")} className="btn-gray">
+              Paramètres
+            </button>
+          </div>
+        </div>
+
+        
+        <div className="dashboard-section">
+          <h1 className="section-title">Dashboard Financier</h1>
+          <div className="dashboard-grid">
+            <Card>
+              <h2>Total Revenus</h2>
+              <p>{income.reduce((a, b) => a + b, 0)} €</p>
+            </Card>
+            <Card>
+              <h2>Total Dépenses</h2>
+              <p>{expenses.reduce((a, b) => a + b, 0)} €</p>
+            </Card>
+            <Card>
+              <h2>Économie</h2>
+              <p>{income.reduce((a, b) => a + b, 0) - expenses.reduce((a, b) => a + b, 0)} €</p>
+            </Card>
+          </div>
+
+          <div className="charts-container">
+            <div className="chart-card">
+              <h2>Répartition des Dépenses</h2>
+              <Pie data={pieData} />
+            </div>
+            <div className="chart-card">
+              <h2>Revenus vs Dépenses</h2>
+              <Line data={lineData} />
+            </div>
+          </div>
+
+          <div className="dashboard-actions">
+            <Button>Ajouter une Dépense</Button>
+            <Button>Ajouter un Revenu</Button>
           </div>
         </div>
       </div>
-
-      <div className="dashboard-grid">
-        <Card>
-          <h2>Total Revenus</h2>
-          <p>{income.reduce((a, b) => a + b, 0)} €</p>
-        </Card>
-
-        <Card>
-          <h2>Total Dépenses</h2>
-          <p>{expenses.reduce((a, b) => a + b, 0)} €</p>
-        </Card>
-
-        <Card>
-          <h2>Économie</h2>
-          <p>
-            {income.reduce((a, b) => a + b, 0) -
-              expenses.reduce((a, b) => a + b, 0)}{" "}
-            €
-          </p>
-        </Card>
-      </div>
-
-      <div className="charts-container">
-        <div className="chart-container">
-          <h2>Répartition des Dépenses</h2>
-          <Pie data={pieData} />
-        </div>
-
-        <div className="chart-container">
-          <h2>Revenus vs Dépenses</h2>
-          <Line data={lineData} />
-        </div>
-      </div>
-
-      <div className="actions">
-        <Button onClick={() => navigate("/expenses")}>Gérer les Dépenses</Button>
-        <Button onClick={() => navigate("/settings")}>Paramètres</Button>
-        <Button onClick={() => navigate("/expenses")}>Ajouter une Dépense</Button>
-        <Button onClick={() => navigate("/income")}>Ajouter un Revenu</Button>
-      </div>
-    </div>
+    
   );
 };
 
-const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({
-  children,
-  className,
-}) => (
-  <div className={`dashboard-card ${className || ""}`}>{children}</div>
+
+const Card: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="dashboard-card">{children}</div>
 );
 
-const Button: React.FC<{
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-}> = ({ children, onClick, className }) => (
-  <button onClick={onClick} className={`dashboard-button ${className || ""}`}>
+const Button: React.FC<{ children: React.ReactNode; onClick?: () => void }> = ({ children, onClick }) => (
+  <button onClick={onClick} className="dashboard-button">
     {children}
   </button>
 );
 
-export default Dashboard;
+export default DashboardProfile;
