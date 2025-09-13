@@ -1,4 +1,6 @@
 import { useState } from "react";
+import HexagonBackground from "./HexagonBackground";
+import { Link } from "react-router-dom";
 
 export default function SettingsPage() {
   const [name, setName] = useState("Erickah Rakoto");
@@ -6,46 +8,71 @@ export default function SettingsPage() {
   const [password, setPassword] = useState("");
 
   const handleSave = () => {
-    alert(`Profil mis à jour : ${name}, ${email}`);
-    // Ici tu fais appel à ton API pour sauvegarder les nouvelles infos
+    alert(`Profile updated: ${name}, ${email}`);
+    setPassword("");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex justify-center items-start">
-      <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">Paramètres du compte</h1>
+    <div className="dashboard-wrapper relative min-h-screen flex">
+      <HexagonBackground />
 
-        <label className="block mb-2">Nom complet :</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border p-2 w-full mb-4 rounded"
-        />
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <img src="user.jpg" alt="User Logo" className="sidebar-logo-img" />
+        </div>
+        <nav className="sidebar-nav">
+          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/profile">Profile</Link>
+          <Link to="/expenses-management">Expense Management</Link>
+          <Link to="/income">Income Tracking</Link>
+          <Link to="/settings">Settings</Link>
+        </nav>
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
+      </aside>
 
-        <label className="block mb-2">Email :</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 w-full mb-4 rounded"
-        />
+      <main className="dashboard-main p-6 flex-1">
+        <header className="dashboard-header mb-6">
+          <h1 className="text-3xl font-bold text-white">Account Settings</h1>
+        </header>
 
-        <label className="block mb-2">Nouveau mot de passe :</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 w-full mb-4 rounded"
-        />
+        <div className="settings-form bg-gray-800 p-6 rounded-xl shadow-lg max-w-md mx-auto text-white flex flex-col gap-4">
+          <label className="font-semibold">Full Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-teal-400"
+          />
 
-        <button
-          onClick={handleSave}
-          className="bg-green-600 text-white px-4 py-2 rounded w-full"
-        >
-          Sauvegarder
-        </button>
-      </div>
+          <label className="font-semibold">Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-teal-400"
+          />
+
+          <label className="font-semibold">New Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="p-2 rounded bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-teal-400"
+          />
+
+          <button
+            onClick={handleSave}
+            className="bg-teal-400 text-black font-bold py-2 rounded hover:bg-teal-500 transition"
+          >
+            Save
+          </button>
+        </div>
+      </main>
     </div>
   );
 }
