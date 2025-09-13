@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-
 export const createUser = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
@@ -23,7 +22,6 @@ export const createUser = async (req, res) => {
   }
 };
 
-
 export const createCategory = async (req, res) => {
   try {
     const { name, description, userId } = req.body;
@@ -43,7 +41,6 @@ export const createCategory = async (req, res) => {
     res.status(500).json({ error: "Failed to create category" });
   }
 };
-
 
 export const createExpense = async (req, res) => {
   try {
@@ -98,8 +95,6 @@ export const getAllExpenses = async (_req, res) => {
     res.status(500).json({ error: "Failed to fetch expenses" });
   }
 };
-
-
 
 export const getExpenseById = async (req, res) => {
   try {

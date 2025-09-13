@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import HexagonBackground from "./HexagonBackground";
-import "./css/ExpenseManagement.css"; 
+import "./css/ExpenseManagement.css";
 
 interface Income {
   id: number;
@@ -17,7 +17,6 @@ export default function IncomePage() {
   const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
   const [source, setSource] = useState("");
   const [description, setDescription] = useState("");
-
   const [editingId, setEditingId] = useState<number | null>(null);
 
   const token = localStorage.getItem("token");
@@ -29,47 +28,50 @@ export default function IncomePage() {
       setIncomes(res.data);
     } catch (err) {
       console.error("Error fetching incomes: ", err);
+      alert("Impossible de charger vos revenus. Vérifie que tu es connecté !");
     }
   };
 
   useEffect(() => {
     fetchIncomes();
   }, []);
+
   const handleSubmit = async () => {
     if (!amount) return alert("Amount is required");
 
     try {
       if (editingId) {
-        const res = await axios.put(
+        await axios.put(
           `http://localhost:5000/api/incomes/${editingId}`,
           { amount, date, source, description },
           axiosConfig
         );
-        setIncomes(incomes.map(inc => (inc.id === editingId ? res.data.income : inc)));
         setEditingId(null);
       } else {
-        const res = await axios.post(
+        await axios.post(
           "http://localhost:5000/api/incomes",
           { amount, date, source, description },
           axiosConfig
         );
-        setIncomes([res.data.income, ...incomes]);
       }
       setAmount(0);
       setDate(new Date().toISOString().split("T")[0]);
       setSource("");
       setDescription("");
+      fetchIncomes();
     } catch (err) {
       console.error("Error saving income: ", err);
+      alert("Erreur lors de l'enregistrement du revenu !");
     }
   };
 
   const deleteIncome = async (id: number) => {
     try {
       await axios.delete(`http://localhost:5000/api/incomes/${id}`, axiosConfig);
-      setIncomes(incomes.filter(inc => inc.id !== id));
+      fetchIncomes();
     } catch (err) {
       console.error("Error deleting income: ", err);
+      alert("Erreur lors de la suppression du revenu !");
     }
   };
 
@@ -110,7 +112,7 @@ export default function IncomePage() {
         </header>
 
         <div className="expenses-list">
-          {incomes.map(inc => (
+          {incomes.map((inc) => (
             <div key={inc.id} className="expense-card">
               <div className="expense-info">
                 <span className="expense-description">{inc.source || "No Source"}</span>
@@ -131,27 +133,27 @@ export default function IncomePage() {
             type="number"
             placeholder="Amount"
             value={amount}
-            onChange={e => setAmount(Number(e.target.value))}
+            onChange={(e) => setAmount(Number(e.target.value))}
             className="expense-input"
           />
           <input
             type="text"
             placeholder="Source"
             value={source}
-            onChange={e => setSource(e.target.value)}
+            onChange={(e) => setSource(e.target.value)}
             className="expense-input"
           />
           <input
             type="text"
             placeholder="Description"
             value={description}
-            onChange={e => setDescription(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             className="expense-input"
           />
           <input
             type="date"
             value={date}
-            onChange={e => setDate(e.target.value)}
+            onChange={(e) => setDate(e.target.value)}
             className="expense-input"
           />
           <button onClick={handleSubmit} className="expense-add">
