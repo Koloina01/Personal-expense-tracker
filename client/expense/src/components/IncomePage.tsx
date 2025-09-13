@@ -1,159 +1,164 @@
-import React, { useEffect, useState } from "react";
-import HexagonBackground from "./HexagonBackground"; 
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import HexagonBackground from "./HexagonBackground";
+import "./css/ExpenseManagement.css"; 
 
 interface Income {
   id: number;
   amount: number;
   date: string;
   source: string;
-  description?: string;
+  description: string;
 }
 
-interface Props {
-  userId: number;
-}
-
-const API_BASE = "http://localhost:5000";
-
-const IncomePage: React.FC<Props> = ({ userId }) => {
+export default function IncomePage() {
   const [incomes, setIncomes] = useState<Income[]>([]);
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState<number>(0);
+  const [date, setDate] = useState<string>(new Date().toISOString().split("T")[0]);
   const [source, setSource] = useState("");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
+
+  const [editingId, setEditingId] = useState<number | null>(null);
+
+  const token = localStorage.getItem("token");
+  const axiosConfig = { headers: { Authorization: `Bearer ${token}` } };
 
   const fetchIncomes = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/api/users/${userId}/incomes`);
+      const res = await axios.get("http://localhost:5000/api/incomes", axiosConfig);
       setIncomes(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching incomes: ", err);
     }
   };
 
   useEffect(() => {
     fetchIncomes();
   }, []);
+  const handleSubmit = async () => {
+    if (!amount) return alert("Amount is required");
 
-  const handleAddIncome = async () => {
     try {
-      await axios.post(`${API_BASE}/api/users/${userId}/incomes`, {
-        amount: parseFloat(amount),
-        source,
-        description,
-        date,
-      });
-      setAmount("");
+      if (editingId) {
+        const res = await axios.put(
+          `http://localhost:5000/api/incomes/${editingId}`,
+          { amount, date, source, description },
+          axiosConfig
+        );
+        setIncomes(incomes.map(inc => (inc.id === editingId ? res.data.income : inc)));
+        setEditingId(null);
+      } else {
+        const res = await axios.post(
+          "http://localhost:5000/api/incomes",
+          { amount, date, source, description },
+          axiosConfig
+        );
+        setIncomes([res.data.income, ...incomes]);
+      }
+      setAmount(0);
+      setDate(new Date().toISOString().split("T")[0]);
       setSource("");
       setDescription("");
-      setDate("");
-      fetchIncomes();
     } catch (err) {
-      console.error(err);
+      console.error("Error saving income: ", err);
     }
   };
 
-  const handleDeleteIncome = async (id: number) => {
+  const deleteIncome = async (id: number) => {
     try {
-      await axios.delete(`${API_BASE}/api/incomes/${id}`);
-      fetchIncomes();
+      await axios.delete(`http://localhost:5000/api/incomes/${id}`, axiosConfig);
+      setIncomes(incomes.filter(inc => inc.id !== id));
     } catch (err) {
-      console.error(err);
+      console.error("Error deleting income: ", err);
     }
+  };
+
+  const editIncome = (income: Income) => {
+    setEditingId(income.id);
+    setAmount(income.amount);
+    setDate(income.date.split("T")[0]);
+    setSource(income.source);
+    setDescription(income.description);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
   };
 
   return (
-    <div className="income-page relative w-full h-screen flex bg-black overflow-hidden font-sans">
+    <div className="dashboard-wrapper">
       <HexagonBackground />
 
-      {/* Formulaire d'ajout */}
-      <div className="income-left flex-1 flex justify-center items-center p-12 text-white z-10">
-        <div className="max-w-md w-full">
-          <h1 className="text-4xl font-bold mb-4">Add New Income</h1>
-          <p className="text-lg opacity-80 mb-6">
-            Add your income and keep track of your budget easily.
-          </p>
-
-          <div className="flex flex-col gap-4 bg-white/10 p-6 rounded-xl backdrop-blur-md">
-            <input
-              type="number"
-              placeholder="Amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="p-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:bg-white/30 outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Source"
-              value={source}
-              onChange={(e) => setSource(e.target.value)}
-              className="p-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:bg-white/30 outline-none"
-            />
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="p-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:bg-white/30 outline-none"
-            />
-            <input
-              type="text"
-              placeholder="Description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="p-3 rounded-lg bg-white/20 text-white placeholder-white/70 focus:bg-white/30 outline-none"
-            />
-            <button
-              onClick={handleAddIncome}
-              className="mt-2 py-3 px-4 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-600 text-white font-semibold hover:scale-105 transition-transform"
-            >
-              Add Income
-            </button>
-          </div>
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <img src="/user.jpg" alt="User Logo" className="sidebar-logo-img" />
         </div>
-      </div>
+        <nav className="sidebar-nav">
+          <a href="/dashboard">Dashboard</a>
+          <a href="/profile">Profile</a>
+          <a href="/expenses-management">Expense Management</a>
+          <a href="/income">Income Tracking</a>
+          <a href="/settings">Settings</a>
+        </nav>
+        <button className="logout-button" onClick={handleLogout}>Logout</button>
+      </aside>
 
-      {/* Liste des revenus */}
-      <div className="income-right flex-1 flex justify-center items-center p-12 z-10 overflow-auto">
-        <div className="w-full max-w-3xl bg-white/10 p-6 rounded-xl backdrop-blur-md text-white">
-          <h2 className="text-3xl font-bold mb-4">Incomes List</h2>
-          {incomes.length === 0 ? (
-            <p className="opacity-80">No incomes yet.</p>
-          ) : (
-            <table className="w-full table-auto border-collapse">
-              <thead>
-                <tr className="border-b border-white/30">
-                  <th className="py-2 px-3 text-left">Amount</th>
-                  <th className="py-2 px-3 text-left">Source</th>
-                  <th className="py-2 px-3 text-left">Date</th>
-                  <th className="py-2 px-3 text-left">Description</th>
-                  <th className="py-2 px-3 text-left">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {incomes.map((income) => (
-                  <tr key={income.id} className="border-b border-white/20 hover:bg-white/10">
-                    <td className="py-2 px-3">{income.amount}</td>
-                    <td className="py-2 px-3">{income.source}</td>
-                    <td className="py-2 px-3">{new Date(income.date).toLocaleDateString()}</td>
-                    <td className="py-2 px-3">{income.description || "-"}</td>
-                    <td className="py-2 px-3">
-                      <button
-                        onClick={() => handleDeleteIncome(income.id)}
-                        className="text-red-400 hover:underline"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+      <main className="dashboard-main">
+        <header className="dashboard-header">
+          <h1>Income Management</h1>
+        </header>
+
+        <div className="expenses-list">
+          {incomes.map(inc => (
+            <div key={inc.id} className="expense-card">
+              <div className="expense-info">
+                <span className="expense-description">{inc.source || "No Source"}</span>
+                <span className="expense-amount">{inc.amount} Ar</span>
+                <span className="expense-category">Desc: {inc.description}</span>
+                <span className="expense-date">Date: {inc.date.split("T")[0]}</span>
+              </div>
+              <div className="category-buttons">
+                <button onClick={() => editIncome(inc)} className="expense-add">Update</button>
+                <button onClick={() => deleteIncome(inc.id)} className="expense-delete">Delete</button>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
+
+        <div className="expense-form">
+          <input
+            type="number"
+            placeholder="Amount"
+            value={amount}
+            onChange={e => setAmount(Number(e.target.value))}
+            className="expense-input"
+          />
+          <input
+            type="text"
+            placeholder="Source"
+            value={source}
+            onChange={e => setSource(e.target.value)}
+            className="expense-input"
+          />
+          <input
+            type="text"
+            placeholder="Description"
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            className="expense-input"
+          />
+          <input
+            type="date"
+            value={date}
+            onChange={e => setDate(e.target.value)}
+            className="expense-input"
+          />
+          <button onClick={handleSubmit} className="expense-add">
+            {editingId ? "Update Income" : "Add Income"}
+          </button>
+        </div>
+      </main>
     </div>
   );
-};
-
-export default IncomePage;
+}
