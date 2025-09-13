@@ -1,137 +1,96 @@
 import React, { useEffect, useState } from "react";
-import { Pie, Line } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-} from "chart.js";
+import { Link } from "react-router-dom";
 import HexagonBackground from "./HexagonBackground";
-import "./css/Dashboard.css";
-import { useNavigate } from "react-router-dom";
+import "./css/ProfilePage.css";
 
-ChartJS.register(
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement
-);
+interface ProfileData {
+  user: { fullName: string; email: string; id: number };
+  totalIncome: number;
+  totalExpenses: number;
+  remaining: number;
+}
 
-const DashboardProfile: React.FC = () => {
-  const navigate = useNavigate();
+const ProfilePage: React.FC = () => {
+  const [profile, setProfile] = useState<ProfileData | null>(null);
 
-  const [expenses, setExpenses] = useState<number[]>([200, 300, 150, 100, 250]);
-  const [income, setIncome] = useState<number[]>([500, 600, 550, 700, 650]);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    console.log("Chargement des données du Dashboard...");
-  }, []);
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        const data = await res.json();
+        setProfile(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchProfile();
+  }, [token]);
 
-  const pieData = {
-    labels: ["Logement", "Nourriture", "Transport", "Loisirs", "Autres"],
-    datasets: [
-      {
-        data: expenses,
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0", "#9966FF"],
-      },
-    ],
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
   };
 
-  const lineData = {
-    labels: ["Jan", "Fév", "Mar", "Avr", "Mai"],
-    datasets: [
-      { label: "Revenus", data: income, borderColor: "#36A2EB", fill: false },
-      { label: "Dépenses", data: expenses, borderColor: "#FF6384", fill: false },
-    ],
-  };
+  if (!profile) return <p>Loading...</p>;
 
-  const user = {
-    fullName: "Erickah Rakoto",
-    email: "erickah@example.com",
-    budget: 250000,
-  };
+  const { user, totalIncome, totalExpenses, remaining } = profile;
 
   return (
-    
-      <div className="dashboard-profile-container">
-        <HexagonBackground/>
-        <div className="profile-section">
-          <h1 className="section-title">Profil Utilisateur</h1>
-          <div className="profile-card">
-            <p><strong>Nom :</strong> {user.fullName}</p>
-            <p><strong>Email :</strong> {user.email}</p>
-            <p><strong>Budget :</strong> {user.budget} Ar</p>
-          </div>
-          <div className="profile-actions">
-            <button onClick={() => navigate("/expenses")} className="btn-blue">
-              Expense Management
-            </button>
-            <button onClick={() => navigate("/dashboard")} className="btn-green">
-              Dashboard
-            </button>
-            <button onClick={() => navigate("/settings")} className="btn-gray">
-              Paramètres
-            </button>
+    <div className="dashboard-wrapper">
+      <HexagonBackground />
+
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          <img src="/user.jpg" alt="Avatar" className="sidebar-logo-img" />
+        </div>
+        <nav className="sidebar-nav">
+          <Link to="/dashboard">Dashboard</Link>
+          <Link to="/profile">Profile</Link>
+          <Link to="/expenses-management">Expense Management</Link>
+          <Link to="/income">Income Tracking</Link>
+          <Link to="/settings">Settings</Link>
+        </nav>
+
+        <button className="logout-button" onClick={handleLogout}>
+          Logout
+        </button>
+      </aside>
+
+      <main className="dashboard-main">
+        <header className="dashboard-header">
+          <h1>{user.fullName}'s Profile</h1>
+        </header>
+
+        <div className="profile-info-card">
+          <img src="/user.jpg" alt="Avatar" className="profile-avatar" />
+          <div className="profile-details">
+            <p><strong>Name:</strong> {user.fullName}</p>
+            <p><strong>Email:</strong> {user.email}</p>
           </div>
         </div>
 
-        
-        <div className="dashboard-section">
-          <h1 className="section-title">Dashboard Financier</h1>
-          <div className="dashboard-grid">
-            <Card>
-              <h2>Total Revenus</h2>
-              <p>{income.reduce((a, b) => a + b, 0)} €</p>
-            </Card>
-            <Card>
-              <h2>Total Dépenses</h2>
-              <p>{expenses.reduce((a, b) => a + b, 0)} €</p>
-            </Card>
-            <Card>
-              <h2>Économie</h2>
-              <p>{income.reduce((a, b) => a + b, 0) - expenses.reduce((a, b) => a + b, 0)} €</p>
-            </Card>
-          </div>
-
-          <div className="charts-container">
-            <div className="chart-card">
-              <h2>Répartition des Dépenses</h2>
-              <Pie data={pieData} />
-            </div>
-            <div className="chart-card">
-              <h2>Revenus vs Dépenses</h2>
-              <Line data={lineData} />
-            </div>
-          </div>
-
-          <div className="dashboard-actions">
-            <Button>Ajouter une Dépense</Button>
-            <Button>Ajouter un Revenu</Button>
-          </div>
+        <div className="stats-grid">
+          <Card title="Total Income" value={`${totalIncome} Ar`} color="green" />
+          <Card title="Total Expenses" value={`${totalExpenses} Ar`} color="red" />
+          <Card title="Savings" value={`${remaining} Ar`} color="teal" />
         </div>
-      </div>
-    
+      </main>
+    </div>
   );
 };
 
-
-const Card: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="dashboard-card">{children}</div>
+const Card: React.FC<{ title: string; value: string; color: string }> = ({ title, value, color }) => (
+  <div className={`stat-card ${color}`}>
+    <h2>{title}</h2>
+    <p>{value}</p>
+  </div>
 );
 
-const Button: React.FC<{ children: React.ReactNode; onClick?: () => void }> = ({ children, onClick }) => (
-  <button onClick={onClick} className="dashboard-button">
-    {children}
-  </button>
-);
-
-export default DashboardProfile;
+export default ProfilePage;
